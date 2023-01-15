@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 
+
 DEBUG = input("DEBUG?")
 if DEBUG == "no":
     skills = input('Enter your Skill: ').strip().split()
@@ -27,11 +28,10 @@ if len(places) > 0:
     url = url[:-3]
 url += "&radius=100"
 
-#Resumes = []
-
+# Resumes = []
+url += f"&p=1"
 for i in range(2, 10):
-    if i != 0:
-        url += f"&p={i}"
+    url = url[:-1] + f"{i}"
     response = requests.get(url)
 
     html = response.text
@@ -42,4 +42,8 @@ for i in range(2, 10):
     for resume_snippets in resume_headers:
         resume_title = resume_snippets.find("h3", class_="itemTitle")
         resume_link = resume_title.find("a")
-        print(resume_link.text)
+        print("Job Title" + resume_link.text)
+        resume_description = resume_snippets.find("div", class_="normalText")
+        resume_location = resume_description.find("span")
+        print(resume_location.text)
+        print("--------------------")
