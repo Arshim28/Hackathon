@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from . import resume_scrape
 from bs4 import BeautifulSoup
 import requests
 
@@ -9,17 +9,18 @@ def results(request):
         if query == "":
             return render(request, 'home.html')
         else:
-
+            resume_scrape.jd = query
+            skills, titles, schools, places = resume_scrape.get_job_keywords(resume_scrape.jd)
+            #print(skills, titles, schools, places)
+            job_titles, job_locations, job_dates, names, emails, job_skills, yoes = resume_scrape.get_profiles_postjobfree(skills,
+                                                                                                             titles,
+                                                                                                             schools,
+                                                                                                             places)
             results = []
-            page = requests.get('https://search17.lycos.com/web/?q='+query).text
-            soup = BeautifulSoup(page,'lxml')
-            listings = soup.find_all(class_="result-item")
-            for content in listings:
-                title = content.find(class_='result-title').text
-                description = content.find(class_='result-description').text
-                link = content.find(class_='result-link').text
-                url = content.find(class_='result-url').text
-                results.append((title,description,url))
+
+            for beta in range(len(job_titles)):
+                results.append((job_titles[beta],job_locations[beta], names[beta], emails[beta], job_skills[beta], yoes[beta]))
+
             context = {
                 'results':results
             }

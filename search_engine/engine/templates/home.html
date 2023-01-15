@@ -13,11 +13,14 @@
     <div class="home">
         <h1>CodeRoom</h1>
         <img src="../static/images/logo.png" alt="bunny search engine"  width="150" height="150">
-        <div class="search-bar">
+        <div class="form-group">
             <form method="POST" action="results">
                 {% csrf_token %}
-                <input class="form-control form-control-lg" type="text" placeholder="Enter your query here" name="search">
-                <button type="submit" class="btn btn-dark">search</button>
+                <div class="form-group">
+                    <label for="exampleTextarea" class="form-label mt-4"></label>
+                    <textarea class="form-control" id="exampleTextarea" name="search" rows="6" placeholder="Enter Job Description here"></textarea>
+                </div>
+                <button type="submit" class="btn btn-dark">Submit</button>
 
             </form>
         </div>
