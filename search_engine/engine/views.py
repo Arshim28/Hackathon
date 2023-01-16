@@ -21,6 +21,14 @@ def results(request):
             for beta in range(len(job_titles)):
                 results.append((job_titles[beta],job_locations[beta], names[beta], emails[beta], job_skills[beta], yoes[beta]))
 
+            job_titles, job_locations, job_dates, job_firms, names, emails, job_skills, yoes, education_list = resume_scrape.get_profiles_hound(skills,
+                                                                                                             titles,
+                                                                                                             schools,
+                                                                                                             places)
+
+            for beta in range(len(job_titles)):
+                results.append((job_titles[beta], job_locations[beta], job_dates[beta], job_firms[beta], names[beta], emails[beta], job_skills[beta], yoes[beta], education_list[beta]))
+
             context = {
                 'results':results
             }

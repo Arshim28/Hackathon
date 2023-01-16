@@ -1,7 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 import openai
-from . import views
 import re
 
 
@@ -148,29 +147,111 @@ def get_profiles_postjobfree(skills, titles, schools, places):
         names.append(cur_name)
         emails.append(cur_email)
         job_skills.append(cur_skills)
-        yoes.append(cur_email)
+        yoes.append(cur_yoe)
 
     return job_titles, job_locations, job_dates, names, emails, job_skills, yoes
 
-openai.api_key= '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'
 
+def get_profiles_hound(skills, titles, schools, places):
+
+    skill_str=" ".join(skills)+" "+" ".join(titles)
+    location_str=" ".join(places)
+
+    print(skill_str, location_str)
+    url="https://www.hound.com/employers/resume-search.php"
+
+    parameters={
+        "kw": skill_str,
+        "locationgen": location_str
+    }
+
+    response=requests.post(url, data=parameters)
+
+    html=response.text
+    soup=BeautifulSoup(html, "html.parser")
+
+    job_cards=soup.find_all("div", class_="jobTitleWrap")
+
+    job_titles=[]
+    job_locations=[]
+    job_dates=[]
+    job_firms=[]
+    education_list=[]
+    names=[]
+    emails=[]
+    job_skills=[]
+    yoes=[]
+
+    counter=0
+    for card in job_cards:
+
+        counter+=1
+        if counter==6:
+            break
+        
+        name=card.find("a", class_="tooltip").text.strip()
+        
+        paragraph_list=card.find_all("p")
+        
+        location=paragraph_list[0].text.strip()
+        school=paragraph_list[1].text.strip()
+        firm=paragraph_list[2].text.strip()
+        job_title=paragraph_list[3].text.strip()
+
+        link=card.find("a")["href"]
+        cur_url="https://www.hound.com/employers/"+link
+
+        cur_response=requests.get(cur_url)
+        cur_html=cur_response.text
+        
+        cur_soup=BeautifulSoup(cur_html, "html.parser")
+        cur_content=cur_soup.find_all("div", class_="content row")
+
+        cur_experience=cur_content[1].text
+        cur_education=cur_content[2].text
+
+        cur_skills=cur_soup.find("div", class_="d-flex align-items-center flex-wrap").text.strip()
+
+        theta=1
+        while theta<len(cur_skills):
+            if ord(cur_skills[theta])<=90 and cur_skills[theta-1]!=" ":
+                cur_skills=cur_skills[:theta]+", "+cur_skills[theta:]
+                theta+=1
+            theta+=1
+
+        job_titles.append(job_title)
+        job_locations.append(location)
+        job_dates.append("")
+        job_firms.append(firm)
+        names.append(name)
+        emails.append("Email not available")
+        job_skills.append(cur_skills)
+        yoes.append(cur_experience)
+        education_list.append(cur_education)
+
+    return job_titles, job_locations, job_dates, job_firms, names, emails, job_skills, yoes, education_list
+        
+
+openai.api_key = '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'
 if __name__=="__main__":
-    
 
     jd=''
 
-    skills , titles, schools, places = get_job_keywords(jd)
 
-    print(skills, titles, schools, places)
+    titles, places, skills, schools = get_job_keywords(jd)
+
+    #print(skills, titles, schools, places)
     
     job_titles, job_locations, job_dates, names, emails, job_skills, yoes = get_profiles_postjobfree(skills , titles, schools, places)
 
-    for beta in range(len(job_titles)):
-        print(job_titles[beta])
-        print(job_locations[beta])
-        print(names[beta])
-        print(emails[beta])
-        print(emails[beta])
-        print(job_skills[beta])
-        print(yoes[beta])
+    #for beta in range(len(job_titles)):
+     #   print(job_titles[beta])
+      #  print(job_locations[beta])
+      #  print(names[beta])
+      #  print(emails[beta])
+      #  print(emails[beta])
+      #  print(job_skills[beta])
+      #  print(yoes[beta])
+
+    #print(get_profiles_hound(skills, titles, schools, places))
         
