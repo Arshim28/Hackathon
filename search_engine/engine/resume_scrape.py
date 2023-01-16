@@ -232,7 +232,7 @@ def get_profiles_hound(skills, titles, schools, places):
     return job_titles, job_locations, job_dates, job_firms, names, emails, job_skills, yoes, education_list
         
 
-openai.api_key = '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'
+openai.api_key = ''
 if __name__=="__main__":
 
     jd=''
