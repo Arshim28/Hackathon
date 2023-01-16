@@ -147,7 +147,7 @@ def get_profiles_postjobfree(skills, titles, schools, places):
         names.append(cur_name)
         emails.append(cur_email)
         job_skills.append(cur_skills)
-        yoes.append(cur_email)
+        yoes.append(cur_yoe)
 
     return job_titles, job_locations, job_dates, names, emails, job_skills, yoes
 
